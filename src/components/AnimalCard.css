@@ -1,0 +1,37 @@
+/* AnimalCard.css */
+.animal-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    text-align: center;
+    width: 200px;
+    margin: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .animal-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .animal-card h3 {
+    margin: 10px 0 5px;
+    font-size: 1.25em;
+    color: #333;
+  }
+  
+  .animal-card p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .animal-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
