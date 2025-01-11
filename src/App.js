@@ -19,13 +19,13 @@ const App = () => {
     const token = localStorage.getItem('token');
     if (token) {
       axios.get('http://localhost:5000/current-user', {
-        headers: { 'x-auth-token': token }
+        headers: { 'x-auth-token': token } 
       })
       .then(response => setCurrentUser(response.data))
-      .catch(error => console.error('Erreur lors de la récupération de l\'utilisateur actuel!', error.response ? error.response.data : error));
+      .catch(error => console.error('Erreur lors de la récupération de l\'utilisateur actuel!', error.response ? error.response.data : error));      
     } else {
       console.error("Token non trouvé dans le localStorage");
-    }
+    }    
   }, []);
 
   useEffect(() => {

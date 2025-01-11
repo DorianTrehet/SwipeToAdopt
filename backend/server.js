@@ -135,6 +135,7 @@ app.post('/swipes', authenticateJWT, async (req, res) => {
 app.get('/current-user', authenticateJWT, async (req, res) => {
   const userId = req.user.id;
   logger.info(`Récupération de l'utilisateur actuel: ${userId}`);
+  console.log('Utilisateur récupéré:', userId);
 
   try {
     const user = await User.findById(userId)

@@ -1,80 +1,95 @@
-// Profile.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Profile = () => {
-  // Exemple d'état pour les informations du profil
   const [user, setUser] = useState({
     name: '',
     email: '',
+    inGameUsername: '',
+    server: '',
+    animalsForAdoption: [],
+    adoptedAnimals: [],
   });
 
-  // Simulation de récupération des données utilisateur (à remplacer par une API réelle)
   useEffect(() => {
-    // Ici, on suppose que les informations sont récupérées depuis un localStorage ou une API.
-    const storedUser = {
-      name: 'John Doe', // Exemple de nom
-      email: 'johndoe@example.com', // Exemple d'email
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        console.log('Token envoyé:', token);
+
+        if (!token) {
+          console.log('Token is missing. Redirecting to login.');
+          window.location.href = '/login';
+          return;
+        }
+
+        const response = await axios.get('http://localhost:5000/current-user', {
+          headers: {
+            'x-auth-token': token,
+          },
+        });
+
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        if (error.response && error.response.status === 401) {
+          console.log('Token is invalid or expired. Redirecting to login.');
+          window.location.href = '/login';
+        }
+      }
     };
-    setUser(storedUser);
+
+    fetchUserData();
   }, []);
-
-  // État pour l'édition des informations
-  const [isEditing, setIsEditing] = useState(false);
-  const [newUserData, setNewUserData] = useState({ ...user });
-
-  // Fonction pour gérer le changement des champs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewUserData({ ...newUserData, [name]: value });
-  };
-
-  // Fonction pour enregistrer les modifications
-  const handleSave = () => {
-    setUser({ ...newUserData });
-    setIsEditing(false);
-    // Vous pourriez envoyer ici les données mises à jour à une API ou les sauvegarder dans un localStorage.
-  };
 
   return (
     <div>
       <h2>Profile</h2>
-      {/* Affichage des informations utilisateur */}
       <div>
         <div>
           <strong>Name: </strong>
-          {isEditing ? (
-            <input
-              type="text"
-              name="name"
-              value={newUserData.name}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{user.name}</span>
-          )}
+          <span>{user.name}</span>
         </div>
 
         <div>
           <strong>Email: </strong>
-          {isEditing ? (
-            <input
-              type="email"
-              name="email"
-              value={newUserData.email}
-              onChange={handleChange}
-            />
-          ) : (
-            <span>{user.email}</span>
-          )}
+          <span>{user.email}</span>
+        </div>
+
+        <div>
+          <strong>In-game Username: </strong>
+          <span>{user.inGameUsername}</span>
+        </div>
+
+        <div>
+          <strong>Server: </strong>
+          <span>{user.server}</span>
         </div>
       </div>
 
-      {/* Boutons pour éditer ou enregistrer */}
       <div>
-        {isEditing ? (
-          <button onClick={handleSave}>Save</button>
+        <h3>Animals for Adoption</h3>
+        {user.animalsForAdoption.length > 0 ? (
+          <ul>
+            {user.animalsForAdoption.map((animal, index) => (
+              <li key={index}>{animal.name} - {animal.race}</li>
+            ))}
+          </ul>
         ) : (
-          <button onClick={() => setIsEditing(true)}>Edit</button>
+          <p>No animals for adoption</p>
+        )}
+      </div>
+
+      <div>
+        <h3>Adopted Animals</h3>
+        {user.adoptedAnimals.length > 0 ? (
+          <ul>
+            {user.adoptedAnimals.map((animal, index) => (
+              <li key={index}>{animal.name} - {animal.race}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No animals adopted</p>
         )}
       </div>
     </div>
