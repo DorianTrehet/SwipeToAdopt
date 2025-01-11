@@ -77,6 +77,26 @@ const Profile = () => {
           <p>No animals for adoption</p>
         )}
       </div>
+      <div>
+        <h3>Animals Adopted</h3>
+        {user.adoptedAnimals.length > 0 ? (
+          <div className="animal-cards-container">
+            {user.adoptedAnimals.map((animal) => (
+              <AnimalCard
+                key={animal._id}
+                name={animal.name}
+                level={animal.level}
+                price={animal.price}
+                stats={animal.stats}
+                imageUrl={animal.imageUrl}
+                isSwipeable={false}
+              />
+            ))}
+          </div>
+        ) : (
+          <p>No animals adopted yet</p>
+        )}
+      </div>
     </div>
   );
 };

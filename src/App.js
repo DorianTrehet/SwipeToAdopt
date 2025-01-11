@@ -46,18 +46,17 @@ const App = () => {
       console.error('Utilisateur non connecté');
       return;
     }
-
+  
     console.log(`Swipe direction: ${direction}, Animal ID: ${animalId}`);
-
+  
     const like_dislike = direction === 'right';
     const token = localStorage.getItem('token');
     if (!token) {
       console.error('Token non trouvé');
       return;
     }
-
+  
     axios.post('http://localhost:5000/swipes', {
-      user_id: currentUser._id,
       animal_id: animalId,
       like_dislike: like_dislike
     }, {
@@ -67,14 +66,17 @@ const App = () => {
     })
     .then(response => {
       console.log('Swipe enregistré avec succès !');
-      if (response.data.matchedUser) {
-        setMatchedUser(response.data.matchedUser); // Set the matched user
+      if (response.data.adoptedAnimal) {
+        setCurrentUser((prevUser) => ({
+          ...prevUser,
+          adoptedAnimals: [...prevUser.adoptedAnimals, response.data.adoptedAnimal]
+        }));
       }
     })
     .catch(error => {
       console.error('Erreur lors de l\'enregistrement du swipe:', error.response ? error.response.data : error);
     });
-  };
+  };  
 
   return (
     <Router>

@@ -111,15 +111,23 @@ app.post('/swipes', authenticateJWT, async (req, res) => {
     });
     await newSwipe.save();
 
-    // Vérifier s'il y a un match
+    // Vérifier si l'utilisateur a aimé l'animal (swipe à droite)
     if (like_dislike) {
-      const animal = await Animal.findById(animal_id).populate('upForAdoptionBy');
-      if (animal && animal.upForAdoptionBy) {
-        return res.status(200).json({
-          message: 'Swipe enregistré avec succès',
-          matchedUser: animal.upForAdoptionBy
-        });
+      const animal = await Animal.findById(animal_id);
+      if (!animal) {
+        return res.status(404).send('Animal non trouvé');
       }
+
+      // Ajouter l'animal dans la liste des animaux adoptés de l'utilisateur
+      const user = await User.findById(userId);
+      user.adoptedAnimals.push(animal_id);
+      await user.save();
+
+      // Retourner l'animal adopté pour la réponse
+      return res.status(200).json({
+        message: 'Swipe enregistré avec succès',
+        adoptedAnimal: animal
+      });
     }
 
     res.status(200).send('Swipe enregistré avec succès');
