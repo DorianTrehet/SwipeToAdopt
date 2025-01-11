@@ -6,9 +6,9 @@ const router = express.Router();
 
 // Route de création d'utilisateur
 router.post('/register', async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password, name, inGameUsername, server } = req.body;
   try {
-    const user = await User.create({ email, password, name });
+    const user = await User.create({ email, password, name, inGameUsername, server });
     const token = jwt.sign({ id: user._id }, config.get('jwtPrivateKey'), { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
