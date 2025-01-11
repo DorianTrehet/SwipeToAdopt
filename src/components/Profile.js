@@ -15,7 +15,6 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('token');
-        console.log('Token envoyé:', token);
 
         if (!token) {
           console.log('Token is missing. Redirecting to login.');
