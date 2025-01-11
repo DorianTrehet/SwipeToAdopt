@@ -5,6 +5,8 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
+  inGameUsername: { type: String, required: true },
+  server: { type: String, required: true },
   animalsForAdoption: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Animal' }],
   adoptedAnimals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Animal' }]
 });

@@ -44,30 +44,48 @@ const logger = winston.createLogger({
 // ==============================
 // Routes for Animals
 // ==============================
-app.post('/animals', async (req, res) => {
-  const { name, age, race, imageUrl } = req.body;
-  const animal = new Animal({ name, age, race, imageUrl });
-  await animal.save();
-  res.send(animal);
+app.post('/animals', authenticateJWT, async (req, res) => {
+  const { name, level, price, stats, imageUrl } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const animal = new Animal({
+      name,
+      level,
+      price,
+      stats,
+      imageUrl,
+      upForAdoptionBy: userId
+    });
+    await animal.save();
+
+    // Ajouter l'animal à la liste des animaux à adopter de l'utilisateur
+    await User.findByIdAndUpdate(userId, { $push: { animalsForAdoption: animal._id } });
+
+    res.status(201).send(animal);
+  } catch (error) {
+    console.error('Erreur lors de la création de l\'animal:', error);
+    res.status(500).send('Erreur lors de la création de l\'animal');
+  }
 });
 
 app.get('/animals', authenticateJWT, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Fetch the IDs of animals that the user has already swiped
+    // Récupérer les ID des animaux déjà swipés par l'utilisateur
     const swipedAnimals = await Swipe.find({ user_id: userId }).distinct('animal_id');
 
-    // Fetch animals that are not put up for adoption by the current user and not swiped by the current user
-    const animals = await Animal.find({ 
+    // Récupérer les animaux non publiés par l'utilisateur actuel et non swipés
+    const animals = await Animal.find({
       upForAdoptionBy: { $ne: userId },
       _id: { $nin: swipedAnimals }
     });
 
-    res.send(animals);
+    res.status(200).send(animals);
   } catch (error) {
-    console.error('Error fetching animals:', error);
-    res.status(500).send('Error fetching animals');
+    console.error('Erreur lors de la récupération des animaux:', error);
+    res.status(500).send('Erreur lors de la récupération des animaux');
   }
 });
 
@@ -75,26 +93,32 @@ app.get('/animals', authenticateJWT, async (req, res) => {
 // Routes for Swipes
 // ==============================
 app.post('/swipes', authenticateJWT, async (req, res) => {
-  const { user_id, animal_id, like_dislike } = req.body;
+  const { animal_id, like_dislike } = req.body;
+  const userId = req.user.id;
 
   try {
-    const existingSwipe = await Swipe.findOne({ user_id: user_id, animal_id: animal_id });
+    // Vérifier si le swipe existe déjà
+    const existingSwipe = await Swipe.findOne({ user_id: userId, animal_id });
     if (existingSwipe) {
       return res.status(400).send('Vous avez déjà swipé cet animal');
     }
 
+    // Enregistrer le nouveau swipe
     const newSwipe = new Swipe({
-      user_id: user_id,
-      animal_id: animal_id,
-      like_dislike: like_dislike
+      user_id: userId,
+      animal_id,
+      like_dislike
     });
-
     await newSwipe.save();
 
+    // Vérifier s'il y a un match
     if (like_dislike) {
       const animal = await Animal.findById(animal_id).populate('upForAdoptionBy');
       if (animal && animal.upForAdoptionBy) {
-        return res.status(200).json({ message: 'Swipe enregistré avec succès', matchedUser: animal.upForAdoptionBy });
+        return res.status(200).json({
+          message: 'Swipe enregistré avec succès',
+          matchedUser: animal.upForAdoptionBy
+        });
       }
     }
 
@@ -113,11 +137,15 @@ app.get('/current-user', authenticateJWT, async (req, res) => {
   logger.info(`Récupération de l'utilisateur actuel: ${userId}`);
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
+      .populate('animalsForAdoption')
+      .populate('adoptedAnimals');
+
     if (!user) {
       logger.error(`Utilisateur non trouvé: ${userId}`);
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
+
     res.json(user);
   } catch (err) {
     logger.error(`Erreur lors de la récupération de l'utilisateur: ${err}`);

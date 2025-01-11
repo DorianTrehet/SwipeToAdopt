@@ -9,7 +9,7 @@ router.post('/register', async (req, res) => {
   const { email, password, name } = req.body;
   try {
     const user = await User.create({ email, password, name });
-    const token = jwt.sign({ id: user._id }, config.get("jwtPrivateKey"), { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, config.get('jwtPrivateKey'), { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
     res.status(400).json({ message: 'Erreur lors de la création de l’utilisateur' });
@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
   if (!user || !(await user.matchPassword(password))) {
     return res.status(401).json({ message: 'Identifiants incorrects' });
   }
-  const token = jwt.sign({ id: user._id }, config.get("jwtPrivateKey"), { expiresIn: '1h' });
+  const token = jwt.sign({ id: user._id }, config.get('jwtPrivateKey'), { expiresIn: '1h' });
   res.json({ token });
 });
 
