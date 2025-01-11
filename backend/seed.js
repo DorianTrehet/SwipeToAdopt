@@ -92,16 +92,21 @@ mongoose.connect('mongodb+srv://doriantrehet:PtmYNmhD4m4gRrY0@cluster0.v6how.mon
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const animal = generateAnimal(i, randomUser._id);
       animals.push(animal);
-      randomUser.animalsForAdoption.push(animal._id);
     }
 
+    // Insérer les animaux dans la base de données
     const createdAnimals = await Animal.insertMany(animals);
     console.log('Animals added successfully');
 
-    // Mettre à jour les utilisateurs avec leurs animaux
-    for (let user of createdUsers) {
-      await user.save();
+    // Mettre à jour les utilisateurs avec les IDs des animaux qu'ils ont mis en adoption
+    for (let animal of createdAnimals) {
+      await User.updateOne(
+        { _id: animal.upForAdoptionBy },
+        { $push: { animalsForAdoption: animal._id } }
+      );
     }
+    console.log('Users updated successfully');
+
 
     // Exemple de création d'un message dans un chat
     const newChat = new Chat({
