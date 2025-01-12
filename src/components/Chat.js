@@ -7,6 +7,7 @@ const socket = io('http://localhost:5000');
 const Chat = ({ from = 'user1', to = 'user2' }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [sentMessages, setSentMessages] = useState(new Set()); // Suivi des messages envoyés par l'utilisateur actuel
 
   useEffect(() => {
     // Créer une room unique pour chaque paire d'utilisateurs
@@ -17,7 +18,8 @@ const Chat = ({ from = 'user1', to = 'user2' }) => {
 
     // Écouter les messages provenant de la room
     socket.on('receiveMessage', (data) => {
-      if ((data.from === from && data.to === to) || (data.from === to && data.to === from)) {
+      // N'ajouter le message que si ce n'est pas un message déjà envoyé par l'utilisateur actuel
+      if (data.from !== from || !sentMessages.has(data.message)) {
         setMessages((prevMessages) => [...prevMessages, data]);
       }
     });
@@ -26,15 +28,24 @@ const Chat = ({ from = 'user1', to = 'user2' }) => {
     return () => {
       socket.off('receiveMessage');
     };
-  }, [from, to]);
+  }, [from, to, sentMessages]);
 
   const sendMessage = () => {
     if (!from || !to) {
       console.error('Les utilisateurs ne sont pas correctement définis');
       return;
     }
-    socket.emit('sendMessage', { from, to, message });
+
+    // Ajouter le message à l'état avant de l'envoyer pour le rendre visible immédiatement
     setMessages((prevMessages) => [...prevMessages, { from, message }]);
+
+    // Envoyer le message au serveur
+    socket.emit('sendMessage', { from, to, message });
+
+    // Ajouter le message à l'ensemble des messages envoyés
+    setSentMessages((prevSentMessages) => new Set(prevSentMessages).add(message));
+
+    // Réinitialiser le champ de message
     setMessage('');
   };
 
