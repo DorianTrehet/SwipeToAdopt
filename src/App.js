@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -8,10 +7,12 @@ import Chat from './components/Chat';
 import Login from './components/Login';
 import Register from './components/Register';
 import AnimalCard from './components/AnimalCard';
+import UserProfileCard from './components/UserProfileCard';  // Nouveau composant pour les profils d'utilisateurs
 import axios from 'axios';
 
 const App = () => {
   const [animals, setAnimals] = useState([]);
+  const [users, setUsers] = useState([]);  // Ajouter un état pour stocker les utilisateurs
   const [currentUser, setCurrentUser] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
 
@@ -31,11 +32,12 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('http://localhost:5000/animals', {
+      // Récupérer tous les utilisateurs
+      axios.get('http://localhost:5000/users', {
         headers: { 'x-auth-token': token }
       })
-      .then(response => setAnimals(response.data))
-      .catch(error => console.error("Erreur lors de la récupération des animaux!", error));
+      .then(response => setUsers(response.data))  // Stocker les utilisateurs dans l'état
+      .catch(error => console.error('Erreur lors de la récupération des utilisateurs!', error));
     } else {
       console.error("Token non trouvé dans le localStorage");
     }
@@ -82,7 +84,23 @@ const App = () => {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<h1>Page d'accueil</h1>} />
+        <Route path="/" element={
+          <div>
+            <h1>Page d'accueil</h1>
+            <div className="user-list">
+              {users.map(user => (
+                <UserProfileCard
+                  key={user._id}
+                  user={user}  // Passer chaque utilisateur au composant UserProfileCard
+                />
+              ))}
+            </div>
+          </div>
+        } />
+        
+        {/* Route dynamique pour afficher un profil utilisateur spécifique */}
+        <Route path="/profile/:userId" element={<Profile />} />
+        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<PrivateRoute element={Profile} />} />

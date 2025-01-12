@@ -43,6 +43,24 @@ const logger = winston.createLogger({
 });
 
 // ==============================
+// Routes for Users
+// ==============================
+app.get('/users', authenticateJWT, async (req, res) => {
+  try {
+    // Récupérer tous les utilisateurs, en excluant le mot de passe et en incluant les animaux
+    const users = await User.find()
+      .select('-password')
+      .populate('animalsForAdoption')
+      .populate('adoptedAnimals');
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs:', error);
+    res.status(500).send('Erreur lors de la récupération des utilisateurs');
+  }
+});
+
+// ==============================
 // Routes for Animals
 // ==============================
 app.post('/animals', authenticateJWT, async (req, res) => {

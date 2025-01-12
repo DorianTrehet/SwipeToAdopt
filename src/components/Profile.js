@@ -41,22 +41,27 @@ const Profile = () => {
   };
 
   return (
-    <div>
-      <h2>Profile</h2>
-      <div>
-        <strong>Name:</strong> <span>{user.name}</span>
+    <div className="profile-container">
+      <div className="profile-header">
+        <h2>Profile</h2>
       </div>
-      <div>
-        <strong>Email:</strong> <span>{user.email}</span>
+
+      <div className="profile-section">
+        <div>
+          <strong>Name:</strong> <span>{user.name}</span>
+        </div>
+        <div>
+          <strong>Email:</strong> <span>{user.email}</span>
+        </div>
+        <div>
+          <strong>In-game Username:</strong> <span>{user.inGameUsername}</span>
+        </div>
+        <div>
+          <strong>Server:</strong> <span>{user.server}</span>
+        </div>
       </div>
-      <div>
-        <strong>In-game Username:</strong> <span>{user.inGameUsername}</span>
-      </div>
-      <div>
-        <strong>Server:</strong> <span>{user.server}</span>
-      </div>
-      
-      <div>
+
+      <div className="profile-section">
         <h3>Animals for Adoption</h3>
         {user.animalsForAdoption.length > 0 ? (
           <div className="animal-cards-container">
@@ -74,10 +79,11 @@ const Profile = () => {
             ))}
           </div>
         ) : (
-          <p>No animals for adoption</p>
+          <p className="no-animals-message">No animals for adoption</p>
         )}
       </div>
-      <div>
+
+      <div className="profile-section">
         <h3>Animals Adopted</h3>
         {user.adoptedAnimals.length > 0 ? (
           <div className="animal-cards-container">
@@ -94,7 +100,7 @@ const Profile = () => {
             ))}
           </div>
         ) : (
-          <p>No animals adopted yet</p>
+          <p className="no-animals-message">No animals adopted yet</p>
         )}
       </div>
     </div>
