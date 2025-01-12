@@ -37,13 +37,19 @@ SwipeToAdopt est une application web permettant aux utilisateurs de swiper des a
       PORT=5000
       ```
 
-5. Démarrez le serveur backend :
+5. Pour peupler la base de données :
     ```sh
     cd backend
-    npm start
+    node seed.js
     ```
 
-6. Démarrez le serveur frontend :
+6. Démarrez le serveur backend :
+    ```sh
+    cd backend
+    node server.js
+    ```
+
+7. Démarrez le serveur frontend :
     ```sh
     cd ../frontend
     npm start
