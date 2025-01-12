@@ -11,7 +11,7 @@ import UserProfileCard from './components/UserProfileCard';  // Nouveau composan
 import axios from 'axios';
 
 const App = () => {
-  const [animals, setAnimals] = useState([]);
+  const [animals, setAnimals] = useState([]);  // Ajouter un état pour stocker les animaux
   const [users, setUsers] = useState([]);  // Ajouter un état pour stocker les utilisateurs
   const [currentUser, setCurrentUser] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
@@ -42,6 +42,20 @@ const App = () => {
       console.error("Token non trouvé dans le localStorage");
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Récupérer les animaux
+      axios.get('http://localhost:5000/animals', {
+        headers: { 'x-auth-token': token }
+      })
+      .then(response => setAnimals(response.data))  // Stocker les animaux dans l'état
+      .catch(error => console.error('Erreur lors de la récupération des animaux!', error));
+    } else {
+      console.error("Token non trouvé dans le localStorage");
+    }
+  }, [currentUser]);  // Charger les animaux lorsque currentUser change
 
   const handleSwipe = (direction, animalId) => {
     if (!currentUser) {
@@ -78,7 +92,7 @@ const App = () => {
     .catch(error => {
       console.error('Erreur lors de l\'enregistrement du swipe:', error.response ? error.response.data : error);
     });
-  };  
+  };
 
   return (
     <Router>
