@@ -1,11 +1,12 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Animal = require('./models/Animal');
 const User = require('./models/User');
 const Chat = require('./models/Chat');
 
-// Connexion à la base de données MongoDB
-mongoose.connect('mongodb+srv://doriantrehet:PtmYNmhD4m4gRrY0@cluster0.v6how.mongodb.net/', {
+// Connexion à la base de données MongoDB avec la variable d'environnement
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

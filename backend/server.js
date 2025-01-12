@@ -9,13 +9,14 @@ const User = require('./models/User');
 const winston = require('winston');
 const http = require('http');
 const cors = require('cors'); 
+require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
 // ==============================
 // Database Connection
 // ==============================
-mongoose.connect('mongodb+srv://doriantrehet:PtmYNmhD4m4gRrY0@cluster0.v6how.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connexion à la base de données réussie'))
   .catch((error) => console.error('Erreur de connexion à la base de données:', error));
 
