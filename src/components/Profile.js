@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom'; // Importer useParams pour récupérer l'ID
 import './Profile.css';
 import AnimalCard from './AnimalCard';
 
@@ -13,6 +14,8 @@ const Profile = () => {
     adoptedAnimals: [],
   });
 
+  const { userId } = useParams(); // Récupérer l'ID de l'utilisateur depuis l'URL
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -21,7 +24,9 @@ const Profile = () => {
           window.location.href = '/login';
           return;
         }
-        const response = await axios.get('http://localhost:5000/current-user', {
+
+        // Utiliser l'ID de l'utilisateur cliqué pour récupérer ses informations
+        const response = await axios.get(`http://localhost:5000/users/${userId}`, {
           headers: {
             'x-auth-token': token,
           },
@@ -33,8 +38,11 @@ const Profile = () => {
         }
       }
     };
-    fetchUserData();
-  }, []);
+
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]); // Refaire l'appel à l'API chaque fois que l'ID change
 
   const handleSwipe = (direction) => {
     console.log(`Animal swiped in the ${direction} direction`);

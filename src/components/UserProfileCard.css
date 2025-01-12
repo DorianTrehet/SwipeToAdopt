@@ -26,4 +26,14 @@
     margin: 5px 0;
     color: #555;
   }
+
+.user-profile-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-profile-card {
+  cursor: pointer;
+}
+
   

@@ -61,6 +61,30 @@ app.get('/users', authenticateJWT, async (req, res) => {
 });
 
 // ==============================
+// Route pour un utilisateur spécifique
+// ==============================
+app.get('/users/:userId', authenticateJWT, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Récupérer l'utilisateur spécifique, en excluant le mot de passe et en incluant ses animaux
+    const user = await User.findById(userId)
+      .select('-password')
+      .populate('animalsForAdoption')
+      .populate('adoptedAnimals');
+
+    if (!user) {
+      return res.status(404).send('Utilisateur non trouvé');
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+    res.status(500).send('Erreur lors de la récupération de l\'utilisateur');
+  }
+});
+
+// ==============================
 // Routes for Animals
 // ==============================
 app.post('/animals', authenticateJWT, async (req, res) => {
