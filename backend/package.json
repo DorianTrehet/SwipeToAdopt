@@ -10,11 +10,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@react-spring/web": "^9.5.5",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.12",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.0",
+    "mongoose": "^8.9.4",
+    "react-tinder-card": "^1.6.4",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "winston": "^3.17.0"

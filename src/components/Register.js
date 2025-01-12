@@ -1,7 +1,7 @@
 // Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Register.css'; // Importation du fichier CSS pour la page d'inscription
+import './Register.css';
 
 const Register = () => {
   const [email, setEmail] = useState('');

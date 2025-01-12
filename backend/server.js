@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const Swipe = require('./models/Swipe');
 const Animal = require('./models/Animal');
+const Chat = require('./models/Chat');
 const authenticateJWT = require('./middleware/auth');
 const User = require('./models/User');
 const winston = require('winston');
@@ -142,8 +143,6 @@ app.post('/swipes', authenticateJWT, async (req, res) => {
 // ==============================
 app.get('/current-user', authenticateJWT, async (req, res) => {
   const userId = req.user.id;
-  logger.info(`Récupération de l'utilisateur actuel: ${userId}`);
-  console.log('Utilisateur récupéré:', userId);
 
   try {
     const user = await User.findById(userId)
@@ -180,9 +179,34 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   console.log('Un nouveau client est connecté :', socket.id);
-  socket.on('sendMessage', ({ from, to, message }) => {
-    io.emit('receiveMessage', { from, to, message });
+
+  // Lorsque le message est envoyé, on l'enregistre dans la base de données
+  socket.on('sendMessage', async ({ from, to, message }) => {
+    const newMessage = new Chat({
+      from,
+      to,
+      message,
+    });
+
+    try {
+      // Sauvegarder le message dans la base de données
+      await newMessage.save();
+      console.log('Message enregistré:', newMessage);
+
+      // Créer une room unique pour chaque paire d'utilisateurs
+      const room = [from, to].sort().join('-'); // La room est identifiée par les noms des utilisateurs, triés pour garantir une clé unique
+
+      // Joindre la room
+      socket.join(room);
+
+      // Émettre le message à la room correspondante
+      io.to(room).emit('receiveMessage', { from, to, message });
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement du message:', error);
+    }
   });
+
+  // Gérer la déconnexion des utilisateurs
   socket.on('disconnect', () => {
     console.log('Client déconnecté :', socket.id);
   });
