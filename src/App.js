@@ -101,11 +101,14 @@ const App = () => {
         <Route path="/" element={
           <div>
             <h1>Page d'accueil</h1>
-            <div className="user-list">
+            <div className="user-list" style={{
+    display: 'flex',
+    justifyContent: 'center',
+  }}>
               {users.map(user => (
                 <UserProfileCard
                   key={user._id}
-                  user={user}  // Passer chaque utilisateur au composant UserProfileCard
+                  user={user}
                 />
               ))}
             </div>
