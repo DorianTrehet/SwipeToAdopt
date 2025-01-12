@@ -39,7 +39,6 @@ SwipeToAdopt est une application web permettant aux utilisateurs de swiper des a
 
 5. Démarrez le serveur frontend :
     ```sh
-    cd ../frontend
     npm start
     ```
 
