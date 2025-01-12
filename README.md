@@ -14,7 +14,7 @@ SwipeToAdopt est une application web permettant aux utilisateurs de swiper des a
 
 1. Clonez le dépôt :
     ```sh
-    git clone https://github.com/votre-utilisateur/swipetoadopt.git
+    git clone https://github.com/DorianTrehet/SwipeToAdopt.git
     cd swipetoadopt
     ```
 
@@ -31,7 +31,7 @@ SwipeToAdopt est une application web permettant aux utilisateurs de swiper des a
     ```
 
 4. Configurez les variables d'environnement :
-    - Créez un fichier [.env](http://_vscodecontentref_/1) dans le dossier [backend](http://_vscodecontentref_/2) avec le contenu suivant :
+    - Créez un fichier [.env] dans le dossier [backend] avec le contenu suivant :
       ```
       MONGO_URI=your_mongodb_connection_string
       PORT=5000
