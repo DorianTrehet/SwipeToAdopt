@@ -6,11 +6,9 @@ const UserProfileCard = ({ user }) => {
   return (
     <Link to={`/profile/${user._id}`} className="user-profile-link">
       <div className="user-profile-card">
-        <img src={user.profilePicture || '/default-avatar.png'} alt={user.name} className="user-profile-image" />
         <h3>{user.name}</h3>
-        <p>{user.email}</p>
-        <p>In-game Username: {user.inGameUsername}</p>
-        <p>Server: {user.server}</p>
+        <p><strong>In-game Username: </strong>{user.inGameUsername}</p>
+        <p><strong>Server: </strong>{user.server}</p>
       </div>
     </Link>
   );
